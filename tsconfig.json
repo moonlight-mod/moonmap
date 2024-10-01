@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es6",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "declaration": true
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules"]
+}
