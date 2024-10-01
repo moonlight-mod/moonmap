@@ -24,7 +24,8 @@ export enum ModuleExportType {
   Function,
   Key,
   Value,
-  KeyValuePair
+  KeyValuePair,
+  Constant
 }
 
 type WebpackModule = (
@@ -50,6 +51,10 @@ export type ModuleExport =
       type: ModuleExportType.KeyValuePair;
       key: string;
       value: any;
+    }
+  | {
+      type: ModuleExportType.Constant;
+      find: string;
     };
 
 export default class Moonmap {
@@ -183,6 +188,10 @@ export default class Moonmap {
           moduleExport.key,
           moduleExport.value
         )?.value;
+      }
+
+      case ModuleExportType.Constant: {
+        return moduleExport.find;
       }
 
       default:
