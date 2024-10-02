@@ -200,24 +200,33 @@ export default class Moonmap {
   }
 
   public remap(moduleName: string, obj: any) {
+    if (typeof obj === "function") return obj;
+
     const keysToMap: Record<string, string> = {};
+    const newExports: Record<string, any> = {};
 
     for (const [exportName, mappedExport] of Object.entries(
       this.exports[moduleName] ?? {}
     )) {
       let unmappedName = this.processExport(obj, exportName, mappedExport);
-      if (unmappedName != null) keysToMap[exportName] = unmappedName;
+      if (unmappedName != null) keysToMap[unmappedName] = exportName;
     }
 
-    return new Proxy(obj, {
-      get: (target, prop) => {
-        if (typeof prop === "string" && keysToMap[prop]) {
-          return target[keysToMap[prop]];
-        } else {
-          return target[prop];
-        }
+    if (obj.Z != null || obj.ZP != null) {
+      keysToMap[obj.ZP ? "ZP" : "Z"] = "default";
+      newExports.__esModule = true;
+    }
+
+    for (const [key, value] of Object.entries(obj)) {
+      const remapped = keysToMap[key];
+      if (remapped) {
+        newExports[remapped] = value;
+      } else {
+        newExports[key] = value;
       }
-    });
+    }
+
+    return newExports;
   }
 
   public getWebpackModules(global: string) {
