@@ -61,10 +61,10 @@ export default class Moonmap {
   private processors: MappingProcessor[];
   private successful: Set<string>;
   private getModuleSource?: (id: string) => string;
-
-  private modules: Record<string, string>;
-  private exports: Record<string, Record<string, ModuleExport>>;
   private sentModules: Set<string>;
+
+  modules: Record<string, string>;
+  exports: Record<string, Record<string, ModuleExport>>;
 
   elapsed: number;
 
