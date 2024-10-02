@@ -30,8 +30,3 @@ moonmap.addExport(name, "ExportName", {
   find: "something to look for"
 });
 ```
-
-## TODO
-
-- [x] Publish
-- [ ] Release to NPM
