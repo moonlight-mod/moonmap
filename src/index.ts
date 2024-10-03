@@ -8,6 +8,10 @@ import {
 export type MappingProcessor = {
   name: string;
   find?: (string | RegExp)[] | (string | RegExp);
+  lazy?: {
+    find: (string | RegExp)[] | (string | RegExp);
+    chunk: RegExp;
+  };
   priority?: number;
   manual?: boolean;
   process: (state: MappingProcessorState) => boolean;
@@ -62,6 +66,8 @@ export default class Moonmap {
   private successful: Set<string>;
   private getModuleSource?: (id: string) => string;
   private sentModules: Set<string>;
+  private mustForceLoad: Set<string>;
+  private forceLoaded: Set<string>;
 
   modules: Record<string, string>;
   exports: Record<string, Record<string, ModuleExport>>;
@@ -75,6 +81,8 @@ export default class Moonmap {
     this.modules = {};
     this.exports = {};
     this.sentModules = new Set();
+    this.mustForceLoad = new Set();
+    this.forceLoaded = new Set();
 
     this.elapsed = 0;
   }
@@ -85,6 +93,30 @@ export default class Moonmap {
 
   public parseScript(id: string, code: string) {
     const start = performance.now();
+
+    const lazy = [...this.processors]
+      .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0))
+      .filter((x) => x.lazy != null);
+
+    for (const processor of lazy) {
+      if (processor.lazy == null) continue;
+      const def = processor.lazy;
+
+      const finds = Array.isArray(def.find) ? def.find : [def.find];
+      const matched = finds.every((find) =>
+        typeof find === "string" ? code.indexOf(find) !== -1 : find?.test(code)
+      );
+
+      if (matched) {
+        const loader = code.match(def.chunk);
+        if (loader) {
+          const chunkIds = [...loader[0].matchAll(/"(\d+)"/g)].map(
+            ([, id]) => id
+          );
+          for (const chunkId of chunkIds) this.mustForceLoad.add(chunkId);
+        }
+      }
+    }
 
     const available = [...this.processors]
       .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0))
@@ -246,6 +278,15 @@ export default class Moonmap {
       ) as WebpackModule;
     }
 
+    return ret;
+  }
+
+  public getLazyModules() {
+    const ret = [...this.mustForceLoad.values()].filter(
+      (x) => !this.forceLoaded.has(x)
+    );
+    for (const id of ret) this.forceLoaded.add(id);
+    this.mustForceLoad.clear();
     return ret;
   }
 }
