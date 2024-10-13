@@ -219,7 +219,7 @@ export default class Moonmap {
           original,
           moduleExport.key,
           moduleExport.value
-        )?.value;
+        )?.key;
       }
 
       case ModuleExportType.Constant: {

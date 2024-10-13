@@ -27,9 +27,9 @@ export function findObjectFromKey(exports: Record<string, any>, key: string) {
     const obj = exports[exportKey];
     if (obj && obj[key] !== undefined) {
       if (subKey) {
-        if (obj[key][subKey]) return obj;
+        if (obj[key][subKey]) return exportKey;
       } else {
-        return obj;
+        return exportKey;
       }
     }
   }
@@ -40,11 +40,11 @@ export function findObjectFromValue(exports: Record<string, any>, value: any) {
   for (const exportKey in exports) {
     const obj = exports[exportKey];
     // eslint-disable-next-line eqeqeq
-    if (obj == value) return obj;
+    if (obj == value) return exportKey;
     for (const subKey in obj) {
       // eslint-disable-next-line eqeqeq
       if (obj && obj[subKey] == value) {
-        return obj;
+        return exportKey;
       }
     }
   }
@@ -60,7 +60,7 @@ export function findObjectFromKeyValuePair(
     const obj = exports[exportKey];
     // eslint-disable-next-line eqeqeq
     if (obj && obj[key] == value) {
-      return { key, value };
+      return { key: exportKey, value };
     }
   }
   return null;
