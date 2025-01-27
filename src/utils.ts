@@ -1,19 +1,29 @@
 export function findFunctionByStrings(
   exports: Record<string, any>,
-  ...strings: (string | RegExp)[]
+  strings: (string | RegExp)[],
+  recursive = false,
+  state = new WeakSet()
 ) {
-  return (
-    Object.entries(exports).filter(
-      ([index, func]) =>
-        typeof func === "function" &&
-        !strings.some(
-          (query) =>
-            !(query instanceof RegExp
-              ? func.toString().match(query)
-              : func.toString().includes(query))
+  for (const [key, value] of Object.entries(exports)) {
+    if (typeof value === "function") {
+      if (
+        strings.every((query) =>
+          query instanceof RegExp
+            ? value.toString().match(query)
+            : value.toString().includes(query)
         )
-    ) ?? null
-  );
+      ) {
+        return key;
+      }
+    } else if (recursive && typeof value === "object" && value !== null) {
+      if (state.has(value)) continue;
+      state.add(value);
+      const result = findFunctionByStrings(value, strings, recursive, state);
+      if (result != null) return key;
+    }
+  }
+
+  return null;
 }
 
 export function findObjectFromKey(exports: Record<string, any>, key: string) {

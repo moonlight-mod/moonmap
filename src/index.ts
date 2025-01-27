@@ -41,7 +41,8 @@ type WebpackModule = (
 export type ModuleExport =
   | {
       type: ModuleExportType.Function;
-      find: string | RegExp;
+      find: string | RegExp | (string | RegExp)[];
+      recursive?: boolean;
     }
   | {
       type: ModuleExportType.Key;
@@ -202,8 +203,13 @@ export default class Moonmap {
   ) {
     switch (moduleExport.type) {
       case ModuleExportType.Function: {
-        const match = findFunctionByStrings(original, moduleExport.find);
-        return match?.[0]?.[0];
+        return findFunctionByStrings(
+          original,
+          Array.isArray(moduleExport.find)
+            ? moduleExport.find
+            : [moduleExport.find],
+          moduleExport.recursive ?? false
+        );
       }
 
       case ModuleExportType.Key: {
