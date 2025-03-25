@@ -247,7 +247,15 @@ export default class Moonmap {
       this.exports[moduleName] ?? {}
     )) {
       let unmappedName = this.processExport(obj, exportName, mappedExport);
-      if (unmappedName != null) keysToMap[unmappedName] = exportName;
+      if (unmappedName != null) {
+        keysToMap[unmappedName] = exportName;
+      } else {
+        // TODO: make this a better proper logger
+        console.warn(
+          `[moonmap] Failed to remap "${exportName}" in "${moduleName}"`,
+          mappedExport
+        );
+      }
     }
 
     if (obj.Z != null || obj.ZP != null) {
