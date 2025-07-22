@@ -267,6 +267,9 @@ export default class Moonmap {
       const remapped = keysToMap[key];
       if (remapped) {
         newExports[remapped] = value;
+        if (remapped === "default") {
+          newExports.__esModule = true;
+        }
       } else {
         newExports[key] = value;
       }
