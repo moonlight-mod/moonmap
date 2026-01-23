@@ -259,7 +259,10 @@ export default class Moonmap {
     }
 
     if (obj.Z != null || obj.ZP != null) {
-      keysToMap[obj.ZP ? "ZP" : "Z"] = "default";
+      keysToMap[obj.ZP != null ? "ZP" : "Z"] = "default";
+      newExports.__esModule = true;
+    } else if (obj.A != null || obj.Ay != null) {
+      keysToMap[obj.Ay != null ? "Ay" : "A"] = "default";
       newExports.__esModule = true;
     }
 
