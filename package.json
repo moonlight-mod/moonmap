@@ -2,6 +2,14 @@
   "name": "@moonlight-mod/moonmap",
   "version": "1.0.7",
   "license": "MIT",
+  "packageManager": "pnpm@10.7.1",
+  "engineStrict": false,
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10",
+    "npm": "pnpm",
+    "yarn": "pnpm"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/moonlight-mod/moonmap.git"
