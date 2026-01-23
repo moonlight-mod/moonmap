@@ -2,7 +2,8 @@ import {
   findFunctionByStrings,
   findObjectFromKey,
   findObjectFromValue,
-  findObjectFromKeyValuePair
+  findObjectFromKeyValuePair,
+  findObjectFromValueSubstring
 } from "./utils";
 
 export type MappingProcessor = {
@@ -29,7 +30,8 @@ export enum ModuleExportType {
   Key,
   Value,
   KeyValuePair,
-  Constant
+  Constant,
+  ValueSubstring
 }
 
 type WebpackModule = (
@@ -59,6 +61,10 @@ export type ModuleExport =
     }
   | {
       type: ModuleExportType.Constant;
+      find: string;
+    }
+  | {
+      type: ModuleExportType.ValueSubstring;
       find: string;
     };
 
@@ -230,6 +236,10 @@ export default class Moonmap {
 
       case ModuleExportType.Constant: {
         return moduleExport.find;
+      }
+
+      case ModuleExportType.ValueSubstring: {
+        return findObjectFromValueSubstring(original, moduleExport.find);
       }
 
       default:

@@ -75,3 +75,15 @@ export function findObjectFromKeyValuePair(
   }
   return null;
 }
+
+export function findObjectFromValueSubstring(
+  exports: Record<string, any>,
+  find: string
+) {
+  for (const exportKey in exports) {
+    const obj = exports[exportKey];
+    if (typeof obj !== "string") continue;
+    if (obj.indexOf(find) > -1) return exportKey;
+  }
+  return null;
+}
