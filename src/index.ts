@@ -117,7 +117,7 @@ export default class Moonmap {
       if (matched) {
         const loader = code.match(def.chunk);
         if (loader) {
-          const chunkIds = [...loader[0].matchAll(/"(\d+)"/g)].map(
+          const chunkIds = [...loader[0].matchAll(/\(((?:\d|e)+)\)/g)].map(
             ([, id]) => id
           );
           for (const chunkId of chunkIds) this.mustForceLoad.add(chunkId);
